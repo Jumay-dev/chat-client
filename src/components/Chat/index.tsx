@@ -1,16 +1,15 @@
 import React, { FC, useState, useRef } from "react";
 import { Button, Box, TextField } from "@mui/material";
 import { Root } from "./styled";
-import List from '@mui/material/List';
-import { Message } from './Message'
+import List from "@mui/material/List";
+import { Message } from "./Message";
 
 export const Chat: FC = () => {
   const [currentMessage, setCurrentMessage] = useState<string | undefined>("");
   const [messages, setMessages] = useState<any[]>([]);
   const [connected, setConnected] = useState(false);
+  const [username, setUsername] = useState<string>("");
   const socket = useRef<WebSocket>();
-
-  const username = "anyname";
 
   function connect() {
     socket.current = new WebSocket("ws://localhost:5000");
@@ -26,7 +25,7 @@ export const Chat: FC = () => {
     };
     socket.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      setMessages((prev) => [...prev, message ]);
+      setMessages((prev) => [...prev, message]);
     };
     socket.current.onclose = () => {
       console.log("Socket закрыт");
@@ -48,14 +47,23 @@ export const Chat: FC = () => {
   };
 
   if (!connected) {
-    return <Button onClick={connect}>Войти</Button>;
+    return (
+      <Root>
+        <div>Введите имя пользователя</div>
+        <TextField
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <Button onClick={connect}>Войти</Button>
+      </Root>
+    );
   }
 
   return (
     <Root>
-      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+      <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
         {messages.map((mess) => (
-          <Message message={mess}/>
+          <Message message={mess} />
         ))}
       </List>
       <TextField
