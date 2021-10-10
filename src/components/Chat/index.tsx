@@ -1,12 +1,15 @@
 import React, { FC, useState, useRef } from "react";
-import { Button, Box, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { Root } from "./styled";
 import List from "@mui/material/List";
 import { Message } from "./Message";
+import { useStores } from "../../hooks/stores";
+import { observer } from "mobx-react-lite";
 
-export const Chat: FC = () => {
+export const Chat: FC = observer(() => {
+  const { user, messages } = useStores();
+  const { messagesList, setMessages } = messages;
   const [currentMessage, setCurrentMessage] = useState<string | undefined>("");
-  const [messages, setMessages] = useState<any[]>([]);
   const [connected, setConnected] = useState(false);
   const [username, setUsername] = useState<string>("");
   const socket = useRef<WebSocket>();
@@ -25,7 +28,7 @@ export const Chat: FC = () => {
     };
     socket.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      setMessages((prev) => [...prev, message]);
+      setMessages([...messagesList, message]);
     };
     socket.current.onclose = () => {
       console.log("Socket закрыт");
@@ -62,7 +65,7 @@ export const Chat: FC = () => {
   return (
     <Root>
       <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-        {messages.map((mess) => (
+        {messagesList.map((mess) => (
           <Message message={mess} />
         ))}
       </List>
@@ -73,4 +76,4 @@ export const Chat: FC = () => {
       <Button onClick={sendMessage}>Отправить</Button>
     </Root>
   );
-};
+});
