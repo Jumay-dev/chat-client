@@ -5,17 +5,14 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import { MessageType } from "../../../types";
+import { MessageType } from "../../types";
 import PersonIcon from '@mui/icons-material/Person';
 
-interface MessageProps {
-  message: MessageType
-}
-
-export const Message: FC<MessageProps> = ({message: { message, event, username }}) => {
+export const Message: FC<MessageType> = ({ message, event, username, id }) => {
+  console.log(username)
   return (
     <>
-      <ListItem alignItems="flex-start">
+      <ListItem alignItems="flex-start" key={id}>
         <ListItemAvatar>
           <PersonIcon />
         </ListItemAvatar>
